@@ -1,5 +1,5 @@
 # Zod Express validator
-This package provides a set of usefull [Express](https://www.npmjs.com/package/express) tools for REST request validation with [zod](https://www.npmjs.com/package/zod) (body, parameters and query) based on [Matt Pocock's](https://https://www.mattpocock.com/) (💜) solution.
+This package provides a set of usefull [Express](https://www.npmjs.com/package/express) tools for REST request validation with [zod](https://www.npmjs.com/package/zod) (body, parameters and query) based on [Matt Pocock's](https://www.mattpocock.com/) (💜) solution.
 
 ### Installation
 ```bash
@@ -102,7 +102,7 @@ export class Example {
     const body = req.body as z.infer<typeof zBody>;
     // ... the rest of your code
   }
-  
+
 }
 ```
 > Due to the limitations of TypeScript decorators, you have to specify the type of req.body manually.
