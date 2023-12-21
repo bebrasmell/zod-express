@@ -12,13 +12,19 @@ export namespace zem {
    * @param config validation configuration (optional)
    * @returns
    */
-  export function Body<T>(schema: z.Schema<T>, config?: ze.ValidationOptions): RequestHandler {
+  export function Body<T>(
+    schema: z.Schema<T>,
+    config?: ze.ValidationOptions,
+  ): RequestHandler {
     return (req, res, next) => {
       const body = schema.safeParse(req.body);
 
       if (!body.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, body.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, body.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(body.error));
       }
 
       next();
@@ -31,13 +37,19 @@ export namespace zem {
    * @param config validation configuration (optional)
    * @returns
    */
-  export function Params<T extends ze.RequestDictionary>(schema: z.Schema<T>, config?: ze.ValidationOptions): RequestHandler {
+  export function Params<T extends ze.RequestDictionary>(
+    schema: z.Schema<T>,
+    config?: ze.ValidationOptions,
+  ): RequestHandler {
     return (req, res, next) => {
       const params = schema.safeParse(req.params);
 
       if (!params.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, params.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, params.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(params.error));
       }
 
       next();
@@ -50,13 +62,19 @@ export namespace zem {
    * @param config validation configuration (optional)
    * @returns
    */
-  export function Query<T extends ze.RequestDictionary>(schema: z.Schema<T>, config?: ze.ValidationOptions): RequestHandler {
+  export function Query<T extends ze.RequestDictionary>(
+    schema: z.Schema<T>,
+    config?: ze.ValidationOptions,
+  ): RequestHandler {
     return (req, res, next) => {
       const query = schema.safeParse(req.query);
 
       if (!query.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, query.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, query.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(query.error));
       }
 
       next();
@@ -69,9 +87,13 @@ export namespace zem {
    * @param config validation configuration (optional)
    * @returns
    */
-  export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extends ze.RequestDictionary>(
+  export function Check<
+    TBody,
+    TParams extends ze.RequestDictionary,
+    TQuery extends ze.RequestDictionary,
+  >(
     schemas: ze.PartinalCheck<TBody, TParams, TQuery>,
-    config?: ze.ValidationOptions
+    config?: ze.ValidationOptions,
   ): RequestHandler {
     return (req, res, next) => {
       const body = schemas.body?.safeParse(req.body);
@@ -79,18 +101,27 @@ export namespace zem {
       const query = schemas.query?.safeParse(req.query);
 
       if (body && !body.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, body.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, body.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(body.error));
       }
 
       if (params && !params.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, params.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, params.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(params.error));
       }
 
       if (query && !query.success) {
-        if (config?.errorHandler) return config.errorHandler(req, res, query.error);
-        return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
+        if (config?.errorHandler)
+          return config.errorHandler(req, res, query.error);
+        return res
+          .status(config?.errorCode ?? 406)
+          .send(ze.getError(query.error));
       }
 
       next();

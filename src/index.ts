@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Request, Response } from "express";
 import { z } from "zod";
 
@@ -15,7 +17,10 @@ export namespace ze {
   /**
    * An express endpoint after checking the request.
    */
-  export type SafeEndpoint<TBody, TParams, TQuery, TResponse> = (req: Request<TParams, unknown, TBody, TQuery>, res: Response) => TResponse;
+  export type SafeEndpoint<TBody, TParams, TQuery, TResponse> = (
+    req: Request<TParams, unknown, TBody, TQuery>,
+    res: Response,
+  ) => TResponse;
 
   /**
    * Request validation schemas.
@@ -29,14 +34,20 @@ export namespace ze {
   /**
    * Request validation schemas.
    */
-  export type PartinalCheck<TBody, TParams, TQuery> = Partial<FullCheck<TBody, TParams, TQuery>>;
+  export type PartinalCheck<TBody, TParams, TQuery> = Partial<
+    FullCheck<TBody, TParams, TQuery>
+  >;
 
   /**
    * Function that handles errors from request validation.
    * @param res express response
    * @param error zod error
    */
-  export type ErrorHandler = (req: Request, res: Response, error: z.ZodError) => void;
+  export type ErrorHandler = (
+    req: Request,
+    res: Response,
+    error: z.ZodError,
+  ) => void;
 
   /**
    * Request validation configuration.
@@ -88,13 +99,14 @@ export namespace ze {
 export function CheckBody<TBody, TRes>(
   schema: z.Schema<TBody>,
   handler: ze.SafeEndpoint<TBody, unknown, unknown, TRes>,
-  config?: ze.ValidationOptions
+  config?: ze.ValidationOptions,
 ): ze.Endpoint {
   return (req, res) => {
     const body = schema.safeParse(req.body);
 
     if (!body.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, body.error);
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, body.error);
       return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
     }
 
@@ -112,14 +124,17 @@ export function CheckBody<TBody, TRes>(
 export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
   schema: z.Schema<TParams>,
   handler: ze.SafeEndpoint<unknown, TParams, unknown, TRes>,
-  config?: ze.ValidationOptions
+  config?: ze.ValidationOptions,
 ): ze.Endpoint {
   return (req, res) => {
     const params = schema.safeParse(req.params);
 
     if (!params.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, params.error);
-      return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, params.error);
+      return res
+        .status(config?.errorCode ?? 406)
+        .send(ze.getError(params.error));
     }
 
     return handler(req as any, res);
@@ -136,14 +151,17 @@ export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
 export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
   schema: z.Schema<TQuery>,
   handler: ze.SafeEndpoint<unknown, unknown, TQuery, TRes>,
-  config?: ze.ValidationOptions
+  config?: ze.ValidationOptions,
 ): ze.Endpoint {
   return (req, res) => {
     const query = schema.safeParse(req.query);
 
     if (!query.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, query.error);
-      return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, query.error);
+      return res
+        .status(config?.errorCode ?? 406)
+        .send(ze.getError(query.error));
     }
 
     return handler(req as any, res);
@@ -157,10 +175,15 @@ export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
  * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
  */
-export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extends ze.RequestDictionary, TRes>(
+export function Check<
+  TBody,
+  TParams extends ze.RequestDictionary,
+  TQuery extends ze.RequestDictionary,
+  TRes,
+>(
   schemas: ze.PartinalCheck<TBody, TParams, TQuery>,
   handler: ze.SafeEndpoint<TBody, TParams, TQuery, TRes>,
-  config?: ze.ValidationOptions
+  config?: ze.ValidationOptions,
 ): ze.Endpoint {
   return (req, res) => {
     const body = schemas.body?.safeParse(req.body);
@@ -168,18 +191,25 @@ export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extend
     const query = schemas.query?.safeParse(req.query);
 
     if (body && !body.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, body.error);
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, body.error);
       return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
     }
 
     if (params && !params.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, params.error);
-      return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, params.error);
+      return res
+        .status(config?.errorCode ?? 406)
+        .send(ze.getError(params.error));
     }
 
     if (query && !query.success) {
-      if (config?.errorHandler) return config.errorHandler(req, res, query.error);
-      return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
+      if (config?.errorHandler)
+        return config.errorHandler(req, res, query.error);
+      return res
+        .status(config?.errorCode ?? 406)
+        .send(ze.getError(query.error));
     }
 
     return handler(req as any, res);
@@ -193,11 +223,14 @@ export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extend
  * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
-export function ValidateBody<TBody>(schema: z.Schema<TBody>, config?: ze.ValidationOptions) {
+export function ValidateBody<TBody>(
+  schema: z.Schema<TBody>,
+  config?: ze.ValidationOptions,
+) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>
+    descriptor: TypedPropertyDescriptor<any>,
   ) {
     const original = descriptor.value;
     descriptor.value = CheckBody(schema, original, config);
@@ -211,11 +244,14 @@ export function ValidateBody<TBody>(schema: z.Schema<TBody>, config?: ze.Validat
  * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
-export function ValidateParams<TParams extends ze.RequestDictionary>(schema: z.Schema<TParams>, config?: ze.ValidationOptions) {
+export function ValidateParams<TParams extends ze.RequestDictionary>(
+  schema: z.Schema<TParams>,
+  config?: ze.ValidationOptions,
+) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>
+    descriptor: TypedPropertyDescriptor<any>,
   ) {
     const original = descriptor.value;
     descriptor.value = CheckParams(schema, original, config);
@@ -229,11 +265,14 @@ export function ValidateParams<TParams extends ze.RequestDictionary>(schema: z.S
  * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
-export function ValidateQuery<TQuery extends ze.RequestDictionary>(schema: z.Schema<TQuery>, config?: ze.ValidationOptions) {
+export function ValidateQuery<TQuery extends ze.RequestDictionary>(
+  schema: z.Schema<TQuery>,
+  config?: ze.ValidationOptions,
+) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>
+    descriptor: TypedPropertyDescriptor<any>,
   ) {
     const original = descriptor.value;
     descriptor.value = CheckQuery(schema, original, config);
@@ -247,11 +286,18 @@ export function ValidateQuery<TQuery extends ze.RequestDictionary>(schema: z.Sch
  * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
-export function Validate<TBody, TParams extends ze.RequestDictionary, TQuery extends ze.RequestDictionary>(schemas: ze.PartinalCheck<TBody, TParams, TQuery>, config?: ze.ValidationOptions) {
+export function Validate<
+  TBody,
+  TParams extends ze.RequestDictionary,
+  TQuery extends ze.RequestDictionary,
+>(
+  schemas: ze.PartinalCheck<TBody, TParams, TQuery>,
+  config?: ze.ValidationOptions,
+) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>
+    descriptor: TypedPropertyDescriptor<any>,
   ) {
     const original = descriptor.value;
     descriptor.value = Check(schemas, original, config);

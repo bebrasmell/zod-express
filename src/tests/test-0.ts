@@ -1,4 +1,13 @@
-import { Check, CheckBody, CheckParams, CheckQuery, Validate, ValidateBody, ValidateParams, ValidateQuery, ze } from "../index.js";
+import {
+  Check,
+  CheckBody,
+  CheckParams,
+  CheckQuery,
+  Validate,
+  ValidateBody,
+  ValidateParams,
+  ValidateQuery,
+} from "../index.js";
 import { Request, Response } from "express";
 import { z } from "zod";
 
@@ -35,10 +44,10 @@ Check(
     const params = req.params;
     const query = req.query;
     res.json({ body, params, query });
-  }
+  },
 );
 
-class Example {
+export class Example {
   @ValidateBody(zSchema)
   create(req: Request, res: Response) {
     const body = req.body as z.infer<typeof zSchema>;
@@ -56,7 +65,6 @@ class Example {
     const query = req.query as z.infer<typeof zQuery>;
     return res.json(query);
   }
-
 
   @Validate({
     body: zSchema,
