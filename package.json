@@ -1,5 +1,5 @@
 {
-  "name": "@bebrasnell/zod-express",
+  "name": "@bebrasmell/zod-express",
   "version": "1.0.0",
   "description": "Request validation for Express using zod",
   "scripts": {
