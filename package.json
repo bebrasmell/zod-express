@@ -1,0 +1,27 @@
+{
+  "name": "@bebrasnell/zod-express",
+  "version": "1.0.0",
+  "description": "Request validation for Express using zod",
+  "scripts": {
+    "build": "tsup src/index.ts"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "bebrasmell",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}
