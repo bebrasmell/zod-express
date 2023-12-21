@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 
+/**
+ * zod-express types.
+ */
 export namespace ze {
   // Types
 
@@ -79,6 +82,7 @@ export namespace ze {
  * Checks the body of the request against the schema.
  * @param schema zod schema to check the body against
  * @param handler the handler to call if the body is valid
+ * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
  */
 export function CheckBody<TBody, TRes>(
@@ -102,6 +106,7 @@ export function CheckBody<TBody, TRes>(
  * Checks request parameters against the schema.
  * @param schema zod schema to check parameters against
  * @param handler the handler to call if parameters are valid
+ * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
  */
 export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
@@ -125,6 +130,7 @@ export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
  * Checks request query against the schema.
  * @param schema zod schema to check query against
  * @param handler the handler to call if query is valid
+ * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
  */
 export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
@@ -148,6 +154,7 @@ export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
  * Checks all parts of the request against the schema.
  * @param schemas zod schemas to check request against
  * @param handler the handler to call if request is valid
+ * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
  */
 export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extends ze.RequestDictionary, TRes>(
@@ -183,7 +190,7 @@ export function Check<TBody, TParams extends ze.RequestDictionary, TQuery extend
 /**
  * Decorator that checks the body of the request against the schema.
  * @param schema zod schema to check the body
- * @param config validation configuration
+ * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
 export function ValidateBody<TBody>(schema: z.Schema<TBody>, config?: ze.ValidationOptions) {
@@ -201,7 +208,7 @@ export function ValidateBody<TBody>(schema: z.Schema<TBody>, config?: ze.Validat
 /**
  * Decorator that checks request parameters against the schema.
  * @param schema zod schema to check parameters
- * @param config validation configuration
+ * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
 export function ValidateParams<TParams extends ze.RequestDictionary>(schema: z.Schema<TParams>, config?: ze.ValidationOptions) {
@@ -219,7 +226,7 @@ export function ValidateParams<TParams extends ze.RequestDictionary>(schema: z.S
 /**
  * Decorator that checks request query against the schema.
  * @param schema zod schema to check query
- * @param config validation configuration
+ * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
 export function ValidateQuery<TQuery extends ze.RequestDictionary>(schema: z.Schema<TQuery>, config?: ze.ValidationOptions) {
@@ -237,7 +244,7 @@ export function ValidateQuery<TQuery extends ze.RequestDictionary>(schema: z.Sch
 /**
  * Decorator that checks all parts of the request against the schema.
  * @param schemas zod schemas to check request
- * @param config validation configuration
+ * @param config validation configuration (optional)
  * @returns class parameter decorator
  */
 export function Validate<TBody, TParams extends ze.RequestDictionary, TQuery extends ze.RequestDictionary>(schemas: ze.PartinalCheck<TBody, TParams, TQuery>, config?: ze.ValidationOptions) {
@@ -251,3 +258,6 @@ export function Validate<TBody, TParams extends ze.RequestDictionary, TQuery ext
     return descriptor;
   };
 }
+
+// Middlewares
+export * from "./middleware.js";

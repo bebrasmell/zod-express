@@ -1,11 +1,14 @@
 # Zod Express validator
 This package provides a set of usefull [Express](https://www.npmjs.com/package/express) tools for REST request validation with [zod](https://www.npmjs.com/package/zod) (body, parameters and query) based on [Matt Pocock's](https://www.mattpocock.com/) (💜) solution.
 
-### Installation
+## Installation
+As simple as:
+
 ```bash
 npm i @bebrasmell/zod-express
  ```
 
+## Usage
 ### Validating body
 Define your request body schema:
 ``` typescript
@@ -24,7 +27,10 @@ const my_endpoint = CheckBody(zBody, (req, res) => {
 });
 ```
 
+### Validating parameters
+
 You can also parse your request parameters using ```CheckParams```:
+
 ``` typescript
 const my_endpoint = CheckParams(zParams, (req, res) => {
   const params = req.params;
@@ -32,7 +38,10 @@ const my_endpoint = CheckParams(zParams, (req, res) => {
 });
 ```
 
+### Validating query parameters
+
 And query parameters using ```CheckQuery```:
+
 ``` typescript
 const my_endpoint = CheckQuery(zQuery, (req, res) => {
   const query = req.query;
@@ -43,6 +52,8 @@ const my_endpoint = CheckQuery(zQuery, (req, res) => {
 As you can see, req.body, req.params and req.query are inferring types from your zod schema.
 
 > Please remember that ```Express``` params and query parameters are always strings. If you want to parse them to other types, you have to do it manually.
+
+### Validating all at once
 
 But what if... We want to validate all of them at once? No problem, just use ```Check```:
 ``` typescript
@@ -58,7 +69,7 @@ const my_endpoint = Check({
 });
 ```
 
-### Error handling
+## Error handling
 If validation fails, ```Check```, ```CheckBody```, ```CheckParams``` and ```CheckQuery``` will automatically send ```406``` response with error message. If you want to handle errors yourself, you can use ```ValidationOptions```:
 
 ``` typescript
@@ -92,7 +103,32 @@ interface ValidationOptions {
 }
 ```
 
-### Experimental: decorators
+## Middleware
+If you prefer to validate your requests aside from your endpoints logic, you can use ```zem.Body```, ```zem.Params```, ```zem.Query``` or ```zem.Check``` middleware:
+``` typescript
+import { zem } from '@bebrasmell/zod-express';
+
+const my_endpoint = (req: Request, res: Response) => {
+  const body = req.body;
+  const params = req.params;
+  const query = req.query;
+  // ... the rest of your code
+};
+
+app.post('/my_endpoint', zem.Body(zBody), my_endpoint);
+app.get('/my_endpoint/:id', zem.Params(zParams), my_endpoint);
+app.get('/my_endpoint', zem.Query(zQuery), my_endpoint);
+
+app.put('/my_endpoint', zem.Check({
+  body: zBody,
+  params: zParams,
+  query: zQuery
+}), my_endpoint);
+```
+
+> In this case your req.body, req.params and req.query will be ```any```. If you want to use types, you have to specify them manually or use CheckBody, CheckParams, CheckQuery or Check.
+
+## Experimental: decorators
 You can also use decorators to validate your requests. Just add ```@ValidateBody```, ```@ValidateParams```, ```@ValidateQuery``` or ```@Validate``` to your endpoint function:
 ``` typescript
 export class Example {
@@ -106,3 +142,7 @@ export class Example {
 }
 ```
 > Due to the limitations of TypeScript decorators, you have to specify the type of req.body manually.
+
+
+## License
+MIT
