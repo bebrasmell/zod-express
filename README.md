@@ -1,11 +1,16 @@
 # Zod Express validator
+
+[![npm version](https://badge.fury.io/js/%40zodyac%2Fexpress.svg)](https://badge.fury.io/js/%40zodyac%2Fexpress)
+
+> A part of [Zodyac](https://npmjs.com/org/zodyac) project.
+
 This package provides a set of usefull [Express](https://www.npmjs.com/package/express) tools for REST request validation with [zod](https://www.npmjs.com/package/zod) (body, parameters and query) based on [Matt Pocock's](https://www.mattpocock.com/) (💜) solution.
 
 ## Installation
 As simple as:
 
 ```bash
-npm i @bebrasmell/zod-express
+npm i @zodyac/express
  ```
 
 ## Usage
@@ -106,7 +111,7 @@ interface ValidationOptions {
 ## Middleware
 If you prefer to validate your requests aside from your endpoints logic, you can use ```zem.Body```, ```zem.Params```, ```zem.Query``` or ```zem.Check``` middleware:
 ``` typescript
-import { zem } from '@bebrasmell/zod-express';
+import { zem } from '@zodyac/express';
 
 const my_endpoint = (req: Request, res: Response) => {
   const body = req.body;

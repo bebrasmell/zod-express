@@ -1,6 +1,6 @@
 {
-  "name": "@bebrasmell/zod-express",
-  "version": "1.1.0",
+  "name": "@zodyac/express",
+  "version": "1.1.1",
   "description": "Request validation for Express using zod",
   "scripts": {
     "build": "tsup src/index.ts"
