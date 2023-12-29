@@ -95,6 +95,20 @@ export namespace ze {
  * @param handler the handler to call if the body is valid
  * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
+ *
+ * @example
+ * import { z } from "zod";
+ * import { CheckBody } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *  name: z.string(),
+ *  age: z.number().int().min(18),
+ * });
+ *
+ * app.post("/", CheckBody(schema, (req, res) => {
+ *   const { name, age } = req.body;
+ *   return res.send(`Hello, ${name}! You are ${age} years old.`);
+ * }));
  */
 export function CheckBody<TBody, TRes>(
   schema: z.Schema<TBody>,
@@ -120,6 +134,19 @@ export function CheckBody<TBody, TRes>(
  * @param handler the handler to call if parameters are valid
  * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
+ *
+ * @example
+ * import { z } from "zod";
+ * import { CheckParams } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *   id: z.string().uuid(),
+ * });
+ *
+ * app.get("/:id", CheckParams(schema, (req, res) => {
+ *  const { id } = req.params;
+ *  return res.send(`Hello from ${id}!`);
+ * }));
  */
 export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
   schema: z.Schema<TParams>,
@@ -147,6 +174,20 @@ export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
  * @param handler the handler to call if query is valid
  * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
+ *
+ * @example
+ * import { z } from "zod";
+ * import { CheckQuery } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *  page: z.number().int().positive().default(1),
+ *  pageSize: z.number().min(1).max(100).default(10),
+ * });
+ *
+ * app.get("/", CheckQuery(schema, (req, res) => {
+ *   const { page, pageSize } = req.query;
+ *   return res.send(`Page ${page} contains ${pageSize} records.`);
+ * }));
  */
 export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
   schema: z.Schema<TQuery>,
@@ -174,6 +215,26 @@ export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
  * @param handler the handler to call if request is valid
  * @param config validation configuration (optional)
  * @returns the endpoint to pass to express
+ *
+ * @example
+ * import { z } from "zod";
+ * import { Check } from "@zodyac/express";
+ *
+ * const schema = {
+ *   body: z.object({
+ *     name: z.string(),
+ *     age: z.number().min(18).int(),
+ *   }),
+ *   params: z.object({
+ *    id: z.string().uuid(),
+ *   }),
+ * };
+ *
+ * app.put("/:id", Check(schema, (req, res) => {
+ *  const { name, age } = req.body;
+ *  const { id } = req.params;
+ *  return res.send(`Hello, ${name}! You are ${age} years old. Your id is ${id}.`);
+ * }));
  */
 export function Check<
   TBody,
@@ -222,6 +283,23 @@ export function Check<
  * @param schema zod schema to check the body
  * @param config validation configuration (optional)
  * @returns class parameter decorator
+ *
+ * @example
+ * import { z } from "zod";
+ * import { ValidateBody } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *   name: z.string(),
+ *   age: z.number().min(18).int(),
+ * });
+ *
+ * class Controller {
+ *   @ ValidateBody(schema)
+ *   static post(req, res) {
+ *     const { name, age } = req.body;
+ *     return res.send(`Hello, ${name}! You are ${age} years old.`);
+ *   }
+ * }
  */
 export function ValidateBody<TBody>(
   schema: z.Schema<TBody>,
@@ -243,6 +321,22 @@ export function ValidateBody<TBody>(
  * @param schema zod schema to check parameters
  * @param config validation configuration (optional)
  * @returns class parameter decorator
+ *
+ * @example
+ * import { z } from "zod";
+ * import { ValidateParams } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *   id: z.string().uuid(),
+ * });
+ *
+ * class Controller {
+ *   @ ValidateParams(schema)
+ *   static get(req: Request, res: Response) {
+ *     const { id } = req.params as z.infer<typeof schema>;
+ *     return res.send(`Hello from ${id}!`);
+ *   }
+ * }
  */
 export function ValidateParams<TParams extends ze.RequestDictionary>(
   schema: z.Schema<TParams>,
@@ -264,6 +358,23 @@ export function ValidateParams<TParams extends ze.RequestDictionary>(
  * @param schema zod schema to check query
  * @param config validation configuration (optional)
  * @returns class parameter decorator
+ *
+ * @example
+ * import { z } from "zod";
+ * import { ValidateQuery } from "@zodyac/express";
+ *
+ * const schema = z.object({
+ *   page: z.number().int().positive().default(1),
+ *   pageSize: z.number().int().min(1).max(100).default(10),
+ * });
+ *
+ * class Controller {
+ *   @ ValidateQuery(schema)
+ *   static get(req: Request, res: Response) {
+ *     const { page, pageSize } = req.query as z.infer<typeof schema>;
+ *     return res.send(`Page ${page} contains ${pageSize} records.`);
+ *   }
+ * }
  */
 export function ValidateQuery<TQuery extends ze.RequestDictionary>(
   schema: z.Schema<TQuery>,
@@ -285,6 +396,29 @@ export function ValidateQuery<TQuery extends ze.RequestDictionary>(
  * @param schemas zod schemas to check request
  * @param config validation configuration (optional)
  * @returns class parameter decorator
+ *
+ * @example
+ * import { z } from "zod";
+ * import { Validate } from "@zodyac/express";
+ *
+ * const schema = {
+ *   body: z.object({
+ *     name: z.string(),
+ *     age: z.number().int().min(18),
+ *   }),
+ *   params: z.object({
+ *     id: z.string().uuid(),
+ *   }),
+ * };
+ *
+ * class Controller {
+ *   @ Validate(schema)
+ *   static put(req: Request, res: Response) {
+ *     const { name, age } = req.body as z.infer<typeof schema.body>;
+ *     const { id } = req.params as z.infer<typeof schema.params>;
+ *     return res.send(`Hello, ${name}! You are ${age} years old. Your id is ${id}.`);
+ *   }
+ * }
  */
 export function Validate<
   TBody,
