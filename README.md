@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40zodyac%2Fexpress.svg)](https://badge.fury.io/js/%40zodyac%2Fexpress)
 
-> A part of [Zodyac](https://npmjs.com/org/zodyac) project.
+> A part of [Zodyac Toolbox](https://npmjs.com/org/zodyac).
 
 This package provides a set of usefull [Express](https://www.npmjs.com/package/express) tools for REST request validation with [zod](https://www.npmjs.com/package/zod) (body, parameters and query) based on [Matt Pocock's](https://www.mattpocock.com/) (💜) solution.
 
