@@ -19,7 +19,6 @@
   ],
   "author": "bebrasmell",
   "license": "MIT",
-  "homepage": "https://zodyac.dev/toolbox/zod-express",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/git-zodyac/express"
