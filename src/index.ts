@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Request, Response } from "express";
-import { z } from "zod";
+import type { Request, Response } from "express";
+import type { z } from "zod";
 
 /**
  * zod-express types.
@@ -43,11 +43,7 @@ export namespace ze {
    * @param res express response
    * @param error zod error
    */
-  export type ErrorHandler = (
-    req: Request,
-    res: Response,
-    error: z.ZodError,
-  ) => void;
+  export type ErrorHandler = (req: Request, res: Response, error: z.ZodError) => void;
 
   /**
    * Request validation configuration.
@@ -119,8 +115,7 @@ export function CheckBody<TBody, TRes>(
     const body = schema.safeParse(req.body);
 
     if (!body.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, body.error);
+      if (config?.errorHandler) return config.errorHandler(req, res, body.error);
       return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
     }
 
@@ -157,11 +152,8 @@ export function CheckParams<TParams extends ze.RequestDictionary, TRes>(
     const params = schema.safeParse(req.params);
 
     if (!params.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, params.error);
-      return res
-        .status(config?.errorCode ?? 406)
-        .send(ze.getError(params.error));
+      if (config?.errorHandler) return config.errorHandler(req, res, params.error);
+      return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
     }
 
     return handler(req as any, res);
@@ -198,11 +190,8 @@ export function CheckQuery<TQuery extends ze.RequestDictionary, TRes>(
     const query = schema.safeParse(req.query);
 
     if (!query.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, query.error);
-      return res
-        .status(config?.errorCode ?? 406)
-        .send(ze.getError(query.error));
+      if (config?.errorHandler) return config.errorHandler(req, res, query.error);
+      return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
     }
 
     return handler(req as any, res);
@@ -252,25 +241,18 @@ export function Check<
     const query = schemas.query?.safeParse(req.query);
 
     if (body && !body.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, body.error);
+      if (config?.errorHandler) return config.errorHandler(req, res, body.error);
       return res.status(config?.errorCode ?? 406).send(ze.getError(body.error));
     }
 
     if (params && !params.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, params.error);
-      return res
-        .status(config?.errorCode ?? 406)
-        .send(ze.getError(params.error));
+      if (config?.errorHandler) return config.errorHandler(req, res, params.error);
+      return res.status(config?.errorCode ?? 406).send(ze.getError(params.error));
     }
 
     if (query && !query.success) {
-      if (config?.errorHandler)
-        return config.errorHandler(req, res, query.error);
-      return res
-        .status(config?.errorCode ?? 406)
-        .send(ze.getError(query.error));
+      if (config?.errorHandler) return config.errorHandler(req, res, query.error);
+      return res.status(config?.errorCode ?? 406).send(ze.getError(query.error));
     }
 
     return handler(req as any, res);
@@ -305,11 +287,7 @@ export function ValidateBody<TBody>(
   schema: z.Schema<TBody>,
   config?: ze.ValidationOptions,
 ) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) {
+  return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
     const original = descriptor.value;
     descriptor.value = CheckBody(schema, original, config);
     return descriptor;
@@ -342,11 +320,7 @@ export function ValidateParams<TParams extends ze.RequestDictionary>(
   schema: z.Schema<TParams>,
   config?: ze.ValidationOptions,
 ) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) {
+  return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
     const original = descriptor.value;
     descriptor.value = CheckParams(schema, original, config);
     return descriptor;
@@ -380,11 +354,7 @@ export function ValidateQuery<TQuery extends ze.RequestDictionary>(
   schema: z.Schema<TQuery>,
   config?: ze.ValidationOptions,
 ) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) {
+  return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
     const original = descriptor.value;
     descriptor.value = CheckQuery(schema, original, config);
     return descriptor;
@@ -424,15 +394,8 @@ export function Validate<
   TBody,
   TParams extends ze.RequestDictionary,
   TQuery extends ze.RequestDictionary,
->(
-  schemas: ze.PartinalCheck<TBody, TParams, TQuery>,
-  config?: ze.ValidationOptions,
-) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) {
+>(schemas: ze.PartinalCheck<TBody, TParams, TQuery>, config?: ze.ValidationOptions) {
+  return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
     const original = descriptor.value;
     descriptor.value = Check(schemas, original, config);
     return descriptor;
